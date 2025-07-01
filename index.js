@@ -1,6 +1,6 @@
 function HashMap (loadFactor = 0.75, capacity = 16) {
     // private variables
-    let size = 0;
+    let length = 0;
     let buckets = new Array(capacity).fill().map(() => []);
 
     //public methods
@@ -16,7 +16,8 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
             return hashCode;
         },
 
-        set(key, value) { // this function looks for a value in the buckets. If it finds one identical, it overwrites, it it does not find any value similar, it adds
+         // this function looks for a value in the buckets. If it finds one identical, it overwrites, it it does not find any value similar, it adds
+        set(key, value) {
             let index = this.hash(key);
             let bucket = buckets[index];
 
@@ -28,23 +29,73 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
             }
 
             bucket.push({ key, value });
-            size++;
+            length++;
         },
 
-        get(key) {  // searches for a value in the buckets
+        // searches for a value in the buckets
+        get(key) {
             let index = this.hash(key);
             let bucket = buckets[index];
 
-            for (let entry of bucket) { // traversers through all of buckets
+            for (let entry of bucket) { // traverses through all of buckets
                 if (entry.key === key) {
                     return entry.value; // returns value if it is found
                 }
             }
             return null; // null if it doesnt finds the assigned value
         },
-        // methods for usage
-        getSize() { return `Buckets used: ${size}` }, // returns size
-        getBuckets() { return buckets }, // returns buckets' content
+
+        // searches for a key in the buckets
+        has(key) {
+            let index = this.hash(key);
+            let bucket = buckets[index];
+
+            for (let entry of bucket) { // traverses through all of buckets
+                if (entry.key === key) {
+                    return true; // returns true if found
+                }
+            }
+            return false; // null if not found
+        },
+
+        // remove a key
+        remove(key) {
+            let index = this.hash(key);
+            let bucket = buckets[index];
+
+            for (let i = 0; i < bucket.length; i++) { // searches for key
+                if (bucket[i].key === key) { // if the key is found, delete it
+                    bucket.splice(i, 1);
+                    length--; // reduce length variable
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        // reset hashmap
+        clear() {
+            length = 0;
+            buckets = new Array(capacity).fill().map(() => []);
+        },
+
+        keys() { // returns an array with only the keys
+            let array = [];
+            for (let bucket of buckets) {
+                for (let entry of bucket) {
+                    array.push(entry.key);
+                }
+            }
+            return array;
+        },
+
+        values() {
+            
+        },
+
+        // more methods for usage
+        getLength() { return `Buckets used: ${length}` }, // returns size
+        entries() { return buckets }, // returns buckets' content
     };
 }
 
@@ -63,5 +114,6 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
  test.set('kite', 'pink')
  test.set('lion', 'golden')
 
- console.log(test.getSize()); // returns size
- console.log(test.getBuckets()); // returns buckets
+ console.log(test.getLength()); // returns length
+ console.log(test.entries()); // returns buckets
+ console.log(test.keys());

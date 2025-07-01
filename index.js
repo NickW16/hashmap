@@ -30,6 +30,18 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
             bucket.push({ key, value });
             size++;
         },
+
+        get(key) {  // searches for a value in the buckets
+            let index = this.hash(key);
+            let bucket = buckets[index];
+
+            for (let entry of bucket) { // traversers through all of buckets
+                if (entry.key === key) {
+                    return entry.value; // returns value if it is found
+                }
+            }
+            return null; // null if it doesnt finds the assigned value
+        },
         // methods for usage
         getSize() { return `Buckets used: ${size}` }, // returns size
         getBuckets() { return buckets }, // returns buckets' content

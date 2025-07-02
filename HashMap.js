@@ -1,31 +1,56 @@
-function HashMap (loadFactor = 0.75, capacity = 16) {
+export function HashMap (loadFactor = 0.75, capacity = 16) {
     // private variables
     let length = 0;
     let buckets = new Array(capacity).fill().map(() => []);
 
+    // private hash function
+    function hash(key) {
+        let hashCode = 0;
+        const primeNumber = 31;
+        for (let i = 0; i < key.length; i++) {
+            hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % capacity;
+        }
+        return hashCode;
+    }
+
+    // rezises if loadfactor is exceeded
+    function resize() {
+        capacity = capacity * 2;
+        const oldBuckets = buckets;
+        buckets =  new Array(capacity).fill().map(() => []);
+        length = 0;
+
+        for (let bucket of oldBuckets) {
+            for (let entry of bucket) {
+                let index = hash(entry.key);
+                buckets[index].push({ key: entry.key, value: entry.value});
+                length++;
+            }
+        }
+    }
+
     //public methods
     return { // made into a factory, not a constructor
-        hash(key) { // hash method
-            let hashCode = 0;
-
-            const primeNumber = 31;
-            for (let i = 0; i < key.length; i++) {
-                hashCode = (primeNumber * hashCode + key.charCodeAt(i)) % capacity; // this generates a key and it modulos it to this.capacity
-            }
-
-            return hashCode;
-        },
+        hash, // expose private hash function
 
          // this function looks for a value in the buckets. If it finds one identical, it overwrites, it it does not find any value similar, it adds
         set(key, value) {
             let index = this.hash(key);
             let bucket = buckets[index];
-
+            
             for (let entry of bucket) {
                 if (entry.key === key) {
                     entry.value = value; // overwrite value if it finds another with same value
                     return;
                 }
+            }
+
+            // check if resizing is needed before adint new key and value
+            if ((length + 1) / buckets.length > loadFactor) {
+                resize(); // resize if loadfactor is exceeded
+                // recalculate index and bucket after resize
+                index = this.hash(key);
+                bucket = buckets[index];
             }
 
             bucket.push({ key, value });
@@ -62,6 +87,10 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
         remove(key) {
             let index = this.hash(key);
             let bucket = buckets[index];
+
+            if (index < 0 || index >= buckets.length) {
+                throw new Error("Trying to access index out of bounds");
+            }
 
             for (let i = 0; i < bucket.length; i++) { // searches for key
                 if (bucket[i].key === key) { // if the key is found, delete it
@@ -112,29 +141,9 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
             return array;
         },
 
+
         // more methods for usage
         getLength() { return `Buckets used: ${length} out of ${capacity}` }, // returns size
         getBuckets() { return buckets }, // returns buckets' content
     };
 }
-
- const test = HashMap() // test
-
- test.set('apple', 'red')
- test.set('banana', 'yellow')
- test.set('carrot', 'orange')
- test.set('dog', 'brown')
- test.set('elephant', 'gray')
- test.set('frog', 'green')
- test.set('grape', 'purple')
- test.set('hat', 'black')
- test.set('ice cream', 'white')
- test.set('jacket', 'blue')
- test.set('kite', 'pink')
- test.set('lion', 'golden')
-
- console.log(test.getLength()); // returns length
- console.log(test.getBuckets()); // returns buckets
- console.log(test.keys());
- console.log(test.values());
-console.log(test.entries());

@@ -64,9 +64,11 @@ export function HashMap (loadFactor = 0.75, capacity = 16) {
 
             for (let entry of bucket) { // traverses through all of buckets
                 if (entry.key === key) {
+                    console.log(`${entry.key} was found, and its value is ${entry.value}!`);
                     return entry.value; // returns value if it is found
                 }
             }
+            console.log(`${key} was not found!`);
             return null; // null if it doesnt finds the assigned value
         },
 
@@ -77,9 +79,11 @@ export function HashMap (loadFactor = 0.75, capacity = 16) {
 
             for (let entry of bucket) { // traverses through all of buckets
                 if (entry.key === key) {
+                    console.log(`${key} was found!`);
                     return true; // returns true if found
                 }
             }
+            console.log(`${key} was not found!`);
             return false; // null if not found
         },
 
@@ -96,9 +100,11 @@ export function HashMap (loadFactor = 0.75, capacity = 16) {
                 if (bucket[i].key === key) { // if the key is found, delete it
                     bucket.splice(i, 1);
                     length--; // reduce length variable
+                    console.log(`${key} was removed!`);
                     return true;
                 }
             }
+            console.log(`${key} was not found!`);
             return false;
         },
 

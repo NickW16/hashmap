@@ -4,7 +4,7 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
     let buckets = new Array(capacity).fill().map(() => []);
 
     //public methods
-    return { //made into a factory, not a constructor
+    return { // made into a factory, not a constructor
         hash(key) { // hash method
             let hashCode = 0;
 
@@ -86,16 +86,35 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
                     array.push(entry.key);
                 }
             }
+            console.log('All keys:')
             return array;
         },
 
-        values() {
-            
+        values() { // returns all the values
+            let array = [];
+            for (let bucket of buckets) {
+                for (let entry of bucket) {
+                    array.push(entry.value);
+                }
+            }
+            console.log('All Values:')
+            return array;
+        },
+
+        entries() { // exhibits all the pairs of keys and values
+            let array = [];
+            for (let bucket of buckets) {
+                for (let entry of bucket) { // creates arrays and appends to the main array
+                    array.push([entry.key, entry.value])
+                }
+            }
+            console.log('Key and value pairs:')
+            return array;
         },
 
         // more methods for usage
-        getLength() { return `Buckets used: ${length}` }, // returns size
-        entries() { return buckets }, // returns buckets' content
+        getLength() { return `Buckets used: ${length} out of ${capacity}` }, // returns size
+        getBuckets() { return buckets }, // returns buckets' content
     };
 }
 
@@ -115,5 +134,7 @@ function HashMap (loadFactor = 0.75, capacity = 16) {
  test.set('lion', 'golden')
 
  console.log(test.getLength()); // returns length
- console.log(test.entries()); // returns buckets
+ console.log(test.getBuckets()); // returns buckets
  console.log(test.keys());
+ console.log(test.values());
+console.log(test.entries());
